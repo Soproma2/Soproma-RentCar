@@ -1,0 +1,82 @@
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="luxury-green-form">
+  <h2 class="form-title">სისტემაში შესვლა</h2>
+
+  <div class="form-group">
+    <label>ტელეფონის ნომერი</label>
+    <input
+      type="text"
+      formControlName="phoneNumber"
+      class="form-control"
+      placeholder="მაგ: 555123456"
+    />
+    <div
+      *ngIf="
+        loginForm.get('phoneNumber')?.invalid &&
+        loginForm.get('phoneNumber')?.touched
+      "
+    >
+      <small *ngIf="loginForm.get('phoneNumber')?.errors?.['required']"
+        >ნომრის შეყვანა აუცილებელია</small
+      >
+      <small *ngIf="loginForm.get('phoneNumber')?.errors?.['minlength']"
+        >მინიმალური 9 სიმბოლო</small
+      >
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>მეილი (არასავალდებულო)</label>
+    <input
+      type="email"
+      formControlName="email"
+      class="form-control"
+      placeholder="მაგ: example@mail.com"
+    />
+    <div
+      *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+    >
+      <small *ngIf="loginForm.get('email')?.errors?.['email']"
+        >მეილი არასწორია</small
+      >
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>პაროლი</label>
+    <input type="password" formControlName="password" class="form-control" />
+    <div
+      *ngIf="
+        loginForm.get('password')?.invalid && loginForm.get('password')?.touched
+      "
+    >
+      <small *ngIf="loginForm.get('password')?.errors?.['required']"
+        >პაროლის შეყვანა აუცილებელია</small
+      >
+      <small *ngIf="loginForm.get('password')?.errors?.['minlength']"
+        >მინიმალური 8 სიმბოლო</small
+      >
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="successMessage" class="success-message">
+    {{ successMessage }}
+  </div>
+
+  <button
+    type="submit"
+    [disabled]="loginForm.invalid || loading || successMessage"
+    class="green-button"
+  >
+    <span *ngIf="!loading && !successMessage">შესვლა</span>
+    <span *ngIf="loading">გთხოვთ მოიცადოთ...</span>
+    <span *ngIf="successMessage">წარმატებულია</span>
+  </button>
+
+  <div class="form-footer">
+    <p>არ გაქვთ ანგარიში? <a routerLink="/register">რეგისტრაცია</a></p>
+  </div>
+</form>

@@ -1,0 +1,36 @@
+<div *ngFor="let car of Cars" class="car-card">
+  <h3>{{ car.brand }}</h3>
+  <p class="model">{{ car.model }} / {{ car.year }}</p>
+
+  <img
+    [src]="car.imageUrl1"
+    [alt]="car.brand + ' ' + car.model"
+    class="car-image"
+  />
+
+  <div class="details">
+    <span
+      ><img src="../..\assets\images\steering wheel.png" alt="icon" />{{
+        car.transmission
+      }}</span
+    >
+    <span
+      ><img src="../..\assets\images\group.png" alt="icon" />{{
+        car.capacity
+      }}
+      კაცი</span
+    >
+    <span
+      ><img src="../..\assets\images\gas.png" alt="icon" />{{
+        car.fuelCapacity
+      }}L Fuel</span
+    >
+  </div>
+
+  <div class="footer">
+    <span class="price">{{ calculatePrice(car) }}&#8382; / დღე</span>
+    <button [routerLink]="['/carPage', car.id]">იქირავე</button>
+  </div>
+</div>
+
+

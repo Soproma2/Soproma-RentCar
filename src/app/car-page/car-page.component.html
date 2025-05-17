@@ -1,0 +1,61 @@
+<div *ngIf="car" class="car-detail-container">
+    <h2>{{ car.brand }} {{ car.model }}</h2>
+    <p class="year">{{ car.year }}</p>
+    
+    <div class="image-gallery">
+      <img [src]="car.imageUrl1" [alt]="car.brand + ' ' + car.model" class="main-image">
+      <div class="thumbnail-container">
+        <img [src]="car.imageUrl1" [alt]="car.brand + ' ' + car.model" class="thumbnail">
+        <img [src]="car.imageUrl2 || car.imageUrl1" [alt]="car.brand + ' ' + car.model" class="thumbnail">
+        <img [src]="car.imageUrl3 || car.imageUrl1" [alt]="car.brand + ' ' + car.model" class="thumbnail">
+      </div>
+    </div>
+  
+    <div class="specifications">
+      <div class="spec-item">
+        <span class="spec-label">მდებარეობა:</span>
+        <span class="spec-value">{{ car.city }}</span>
+      </div>
+      <div class="spec-item">
+        <span class="spec-label">გამოშვების წელი:</span>
+        <span class="spec-value">{{ car.year }}</span>
+      </div>
+      <div class="spec-item">
+        <span class="spec-label">ტრანსმისია:</span>
+        <span class="spec-value">{{ car.transmission }}</span>
+      </div>
+      <div class="spec-item">
+        <span class="spec-label">ტევადობა:</span>
+        <span class="spec-value">{{ car.capacity }} კაცი</span>
+      </div>
+      <div class="spec-item">
+        <span class="spec-label">საწვავის ავზი:</span>
+        <span class="spec-value">{{ car.fuelCapacity }}L</span>
+      </div>
+      <div class="spec-item">
+        <span class="spec-label">ფასი:</span>
+        <span class="spec-value price">{{ car.price * car.multiplier }}&#8382; / დღე</span>
+      </div>
+    </div>
+
+    <div class="rent-days-selector">
+      <label for="days">დღეების რაოდენობა: {{ rentalDays }}</label>
+      <input type="range" id="days" name="days" min="1" max="30" [(ngModel)]="rentalDays" class="days-range">
+      <div class="range-labels">
+        <span>1</span>
+        <span>30</span>
+      </div>
+      
+      <div class="total-price">
+        <h3>ჯამური ფასი: {{ calculateTotalPrice() }}&#8382;</h3>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <button class="favorite-button" (click)="toggleFavorite()" [class.favorited]="isFavorite">
+        <i class="heart-icon">{{ isFavorite ? '❤️' : '🤍' }}</i>
+        {{ isFavorite ? 'ფავორიტებიდან წაშლა' : 'ფავორიტებში დამატება' }}
+      </button>
+      <button class="rent-button" (click)="rentCar()">დაჯავშნა</button>
+    </div>
+  </div>

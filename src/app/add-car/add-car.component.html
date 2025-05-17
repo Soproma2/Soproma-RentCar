@@ -1,0 +1,205 @@
+<div class="add-car-container">
+  <h2>მანქანის დამატება</h2>
+
+  <form [formGroup]="carForm" (ngSubmit)="onSubmit()" class="car-form">
+    <div class="form-group">
+      <label for="brand">მარკა:</label>
+      <input
+        id="brand"
+        type="text"
+        formControlName="brand"
+        class="form-control"
+      />
+      <div
+        *ngIf="carForm.get('brand')?.invalid && carForm.get('brand')?.touched"
+        class="error-message"
+      >
+        მარკის შეყვანა სავალდებულოა
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="model">მოდელი:</label>
+      <input
+        id="model"
+        type="text"
+        formControlName="model"
+        class="form-control"
+      />
+      <div
+        *ngIf="carForm.get('model')?.invalid && carForm.get('model')?.touched"
+        class="error-message"
+      >
+        მოდელის შეყვანა სავალდებულოა
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="year">წელი:</label>
+      <input
+        id="year"
+        type="number"
+        formControlName="year"
+        class="form-control"
+      />
+      <div
+        *ngIf="carForm.get('year')?.invalid && carForm.get('year')?.touched"
+        class="error-message"
+      >
+        გთხოვთ შეიყვანოთ სწორი წელი
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="price">ფასი (დღეში):</label>
+      <input
+        id="price"
+        type="number"
+        formControlName="price"
+        class="form-control"
+        step="0.01"
+        min="0"
+      />
+      <div
+        *ngIf="carForm.get('price')?.invalid && carForm.get('price')?.touched"
+        class="error-message"
+      >
+        <div *ngIf="carForm.get('price')?.errors?.['required']">ფასის შეყვანა სავალდებულოა</div>
+        <div *ngIf="carForm.get('price')?.errors?.['min']">ფასი უნდა იყოს დადებითი რიცხვი</div>
+      </div>
+      <small class="field-hint">გთხოვთ შეიყვანოთ ფასი ლარებში (მაგ. 50)</small>
+    </div>
+
+    <div class="form-group">
+      <label for="city">ქალაქი:</label>
+      <input
+        id="city"
+        type="text"
+        formControlName="city"
+        class="form-control"
+      />
+      <div
+        *ngIf="carForm.get('city')?.invalid && carForm.get('city')?.touched"
+        class="error-message"
+      >
+        ქალაქის შეყვანა სავალდებულოა
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="transmission">ტრანსმისია:</label>
+      <select
+        id="transmission"
+        formControlName="transmission"
+        class="form-control"
+      >
+        <option value="">აირჩიეთ</option>
+        <option value="ავტომატიკა">ავტომატიკა</option>
+        <option value="მექანიკა">მექანიკა</option>
+      </select>
+      <div
+        *ngIf="
+          carForm.get('transmission')?.invalid &&
+          carForm.get('transmission')?.touched
+        "
+        class="error-message"
+      >
+        გთხოვთ აირჩიოთ ტრანსმისია
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="capacity">ტევადობა (კაცი):</label>
+      <input
+        id="capacity"
+        type="number"
+        formControlName="capacity"
+        class="form-control"
+      />
+      <div
+        *ngIf="
+          carForm.get('capacity')?.invalid && carForm.get('capacity')?.touched
+        "
+        class="error-message"
+      >
+        გთხოვთ შეიყვანოთ სწორი ტევადობა
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="fuelCapacity">საწვავის ავზი (ლიტრი):</label>
+      <input
+        id="fuelCapacity"
+        type="number"
+        formControlName="fuelCapacity"
+        class="form-control"
+      />
+      <div
+        *ngIf="
+          carForm.get('fuelCapacity')?.invalid &&
+          carForm.get('fuelCapacity')?.touched
+        "
+        class="error-message"
+      >
+        გთხოვთ შეიყვანოთ სწორი საწვავის ავზის მოცულობა
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="ownerPhoneNumber">ტელეფონის ნომერი:</label>
+      <input
+        id="ownerPhoneNumber"
+        type="text"
+        formControlName="ownerPhoneNumber"
+        class="form-control"
+        readonly
+      />
+      <small class="info-note">ავტომატურად შევსებულია თქვენი პროფილიდან</small>
+    </div>
+
+    <div class="form-group">
+      <label for="images">სურათები (მინიმუმ 1, მაქსიმუმ 3):</label>
+      <input
+        id="images"
+        type="file"
+        (change)="onFileSelected($event)"
+        multiple
+        class="form-control"
+        accept="image/jpeg,image/png,image/jpg"
+      />
+      <small class="field-hint">
+        დასაშვები ფორმატები: JPG, PNG. მაქსიმალური ზომა: 2MB თითო სურათზე
+      </small>
+      <div *ngIf="selectedImages.length === 0" class="info-message">
+        გთხოვთ აირჩიოთ მინიმუმ 1 სურათი
+      </div>
+      <div *ngIf="selectedImages.length > 0" class="image-preview">
+        <p>არჩეული სურათები: {{ selectedImages.length }}/3</p>
+        <ul>
+          <li *ngFor="let img of selectedImages">
+            {{ img.name }} ({{ (img.size / 1024 / 1024).toFixed(2) }} MB)
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+
+    <div *ngIf="successMessage" class="alert alert-success">
+      {{ successMessage }}
+    </div>
+
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="
+        isSubmitting || carForm.invalid || selectedImages.length === 0
+      "
+    >
+      <span *ngIf="!isSubmitting">დამატება</span>
+      <span *ngIf="isSubmitting">მიმდინარეობს...</span>
+    </button>
+  </form>
+</div>

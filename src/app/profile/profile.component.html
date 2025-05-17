@@ -1,0 +1,155 @@
+<div class="profile-container">
+  <div class="user-info">
+    <h2>პროფილი</h2>
+
+    <!-- Debug info - can remove after fixing -->
+    <div *ngIf="!user" class="alert alert-info">
+      მომხმარებლის მონაცემების ჩატვირთვა...
+    </div>
+
+    <div class="user-details">
+      <div class="detail-item">
+        <span class="label">სახელი:</span>
+        <span class="value">{{ user?.firstName || "არ არის მითითებული" }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">გვარი:</span>
+        <span class="value">{{ user?.lastName || "არ არის მითითებული" }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">ტელეფონი:</span>
+        <span class="value">{{
+          user?.phoneNumber || "არ არის მითითებული"
+        }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">მეილი:</span>
+        <span class="value">{{ user?.email || "არ არის მითითებული" }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="rental-history">
+    <h3>ნაქირავები მანქანები</h3>
+
+    <div *ngIf="rentals?.length; else noRentals" class="rentals-grid">
+      <div *ngFor="let rental of rentals" class="rental-card">
+        <div class="car-image">
+          <img
+            [src]="rental.car.imageUrl1"
+            [alt]="rental.car.brand + ' ' + rental.car.model"
+          />
+        </div>
+        <div class="rental-details">
+          <h4>{{ rental.car.brand }} {{ rental.car.model }}</h4>
+          <div class="detail-row">
+            <i class="icon">📍</i>
+            <span>{{ rental.car.city }}</span>
+          </div>
+          <div class="detail-row">
+            <i class="icon">⏱️</i>
+            <span>ქირაობის ხანგრძლივობა: {{ rental.days }} დღე</span>
+          </div>
+          <div class="detail-row">
+            <i class="icon">💰</i>
+            <span>ჯამური ღირებულება: {{ rental.totalPrice }}₾</span>
+          </div>
+          <div class="detail-row">
+            <i class="icon">💳</i>
+            <span
+              >დღიური ღირებულება: {{ rental.totalPrice / rental.days }}₾</span
+            >
+          </div>
+          <div class="rental-dates">
+            <small>
+              <i class="icon">📅</i>
+              დაწყება: {{ rental.startDate | date : "medium" }} - დასრულება:
+              {{ rental.endDate | date : "medium" }}
+            </small>
+          </div>
+          <!-- <button class="delete-btn" (click)="deleteRental(rental.id)">
+            <i class="icon">🗑️</i> წაშლა
+          </button> -->
+          <div class="rental-actions">
+            <a
+              [routerLink]="rental.car.id ? ['/car', rental.car.id] : []"
+              class="view-details"
+              [class.disabled]="!rental.car.id"
+            >
+              დეტალები
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noRentals>
+      <div class="no-rentals">
+        <p>თქვენ ჯერ არ გაქვთ ნაქირავები მანქანები</p>
+      </div>
+    </ng-template>
+  </div>
+
+  <div class="favorites-section">
+    <h3>ჩემი ფავორიტები</h3>
+
+    <div *ngIf="favorites.length > 0; else noFavorites" class="favorites-grid">
+      <div *ngFor="let car of favorites" class="favorite-car-card">
+        <div class="favorite-car-image">
+          <img [src]="car.imageUrl1" [alt]="car.brand + ' ' + car.model" />
+        </div>
+        <div class="favorite-car-info">
+          <h4>{{ car.brand }} {{ car.model }}</h4>
+          <p>{{ car.year }} | {{ car.city }}</p>
+          <p class="favorite-car-price">
+            {{ car.price * car.multiplier }}₾ / დღე
+          </p>
+          <div class="favorite-car-actions">
+            <button class="remove-favorite" (click)="removeFavorite(car)">
+              <i>🗑️</i> წაშლა
+            </button>
+            <a [routerLink]="['/car', car.id]" class="view-details">
+              დეტალები
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noFavorites>
+      <p class="no-favorites-message">თქვენ ჯერ არ გაქვთ ფავორიტი მანქანები</p>
+    </ng-template>
+  </div>
+
+  <div class="uploaded-cars-section">
+    <h3>ჩემს მიერ ატვირთული მანქანები</h3>
+
+    <div
+      *ngIf="uploadedCars?.length; else noUploads"
+      class="uploaded-cars-grid"
+    >
+      <div *ngFor="let car of uploadedCars" class="car-card">
+        <div class="car-image">
+          <img [src]="car.imageUrl1" [alt]="car.brand + ' ' + car.model" />
+        </div>
+        <div class="car-info">
+          <h4>{{ car.brand }} {{ car.model }}</h4>
+          <p>{{ car.year }} | {{ car.city }}</p>
+          <p class="car-price">{{ car.price * car.multiplier }}₾ / დღე</p>
+          <div class="car-actions">
+            <button class="delete-btn" (click)="deleteCar(car.id)">
+              <i>🗑️</i> წაშლა
+            </button>
+            <a [routerLink]="['/car', car.id]" class="view-details">
+              დეტალები
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noUploads>
+      <p class="no-uploads-message">თქვენ ჯერ არ გაქვთ ატვირთული მანქანები</p>
+    </ng-template>
+  </div>
+</div>
