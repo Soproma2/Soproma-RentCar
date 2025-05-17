@@ -4,3 +4,26 @@
     Padding: 0;
     box-sizing: border-box;
 }
+
+body {
+    margin: 0;
+    padding: 0;
+    background-image: url('./assets/images/background2.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    position: relative;
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:blur(10px);
+    z-index: -1;
+}
