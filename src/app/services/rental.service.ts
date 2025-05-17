@@ -4,7 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export interface CarRental {
   id: string;
   car: {
-    id?: number; // Add optional id property
+    id?: number;
     brand: string;
     model: string;
     city: string;
