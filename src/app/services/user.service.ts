@@ -67,8 +67,7 @@ export class UserService {
                   'User data stored successfully. Auth state updated.'
                 );
               } else {
-                // After login succeeded but no user data was returned,
-                // immediately fetch complete user details
+
                 this.getUserDetails().subscribe({
                   next: (userData) => {
                     console.log('Fetched complete user profile after login');
@@ -79,7 +78,7 @@ export class UserService {
                       err
                     );
 
-                    // Still create a minimal user object as fallback
+ 
                     const minimalUser = {
                       phoneNumber: user.phoneNumber,
                     } as Users;
@@ -181,15 +180,12 @@ export class UserService {
     }
   }
 
-  /**
-   * Gets current user details from the server
-   * @returns Observable with the user details
-   */
+
   getUserDetails(): Observable<Users> {
     const token = localStorage.getItem('token');
     const currentUser = this.currentUserValue;
 
-    // We need the phone number to make the API call
+   
     if (!token || !currentUser?.phoneNumber) {
       return new Observable((observer) => {
         observer.error('No authentication token or phone number available');
@@ -197,7 +193,7 @@ export class UserService {
       });
     }
 
-    // Use the correct endpoint: /api/Users/{phoneNumber}
+   
     return this.http
       .get<Users>(
         `${this.apiUrl}/${encodeURIComponent(currentUser.phoneNumber)}`,
@@ -209,9 +205,9 @@ export class UserService {
         tap((user) => {
           if (user) {
             console.log('Received user data from API:', user);
-            // Update stored user
+ 
             localStorage.setItem('currentUser', JSON.stringify(user));
-            // Update the BehaviorSubject
+
             this.currentUserSubject.next(user);
           }
         })

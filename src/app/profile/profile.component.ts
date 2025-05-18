@@ -6,6 +6,7 @@ import { Car } from '../models/car.model';
 import { RouterModule } from '@angular/router';
 import { CarService } from '../car.service';
 import { HttpClient } from '@angular/common/http';
+import { FavoriteService } from '../services/favorite.service';
 
 @Component({
   selector: 'app-profile',
@@ -24,6 +25,7 @@ export class ProfileComponent implements OnInit {
   constructor(
     public userService: UserService,
     private rentalService: RentalService,
+    private favoriteService:FavoriteService,
     private carService: CarService,
     private http: HttpClient
   ) {}
@@ -197,8 +199,30 @@ export class ProfileComponent implements OnInit {
   }
 
   loadFavorites() {
-    const favoritesJson = localStorage.getItem('favorites');
-    this.favorites = favoritesJson ? JSON.parse(favoritesJson) : [];
+    if (this.user?.phoneNumber) {
+      this.favoriteService.getFavorite(this.user.phoneNumber).subscribe({
+        next: (response) => {
+          this.favorites = response;
+        },
+        error: error => {
+          console.error(error.message);
+        }
+      });
+    }
+  }
+
+  addFavorite(carId: number) {
+    if (this.user?.phoneNumber) {
+      this.favoriteService.postFavorite(this.user.phoneNumber, carId).subscribe({
+        next: () => {
+          console.log('Car added to favorites successfully');
+          this.loadFavorites(); 
+        },
+        error: error => {
+          console.error('Failed to add favorite:', error);
+        }
+      });
+    }
   }
 
   removeFavorite(car: Car) {

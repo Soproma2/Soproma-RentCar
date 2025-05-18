@@ -5,6 +5,8 @@ import { CarService } from '../car.service';
 import { Car } from '../models/car.model';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { CarFilter, PopularityFilter } from '../models/carFilter.model';
+import { FavoriteService } from '../services/favorite.service';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-home-page',
@@ -42,10 +44,14 @@ export class HomePageComponent implements OnInit {
     { value: PopularityFilter.BEST_RATED, label: 'საუკეთესო შეფასებით' }
   ];
 
+  favorites: Car[] = [];  // Add this property
+
   constructor(
     private carService: CarService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private favoriteService: FavoriteService,
+    private userService: UserService
   ) {
     this.years = Array.from(
       { length: this.currentYear - 1989 },
@@ -55,6 +61,7 @@ export class HomePageComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCities();
+    this.loadFavorites(); // Add this line
 
     this.route.queryParams.subscribe((params) => {
       this.filter.pageIndex = params['page'] ? parseInt(params['page']) : 1;
@@ -246,26 +253,56 @@ export class HomePageComponent implements OnInit {
     return price * finalMultiplier;
   }
 
+  loadFavorites(): void {
+    const user = this.userService.currentUserValue;
+    if (user?.phoneNumber) {
+      this.favoriteService.getFavorite(user.phoneNumber).subscribe({
+        next: (response) => {
+          this.favorites = response;
+        },
+        error: (error) => {
+          console.error('Error loading favorites:', error);
+        }
+      });
+    }
+  }
+
   isFavorite(car: Car): boolean {
-    const favorites = this.getFavorites();
-    return favorites.some(fav => fav.id === car.id);
+    return this.favorites.some(fav => fav.id === car.id);
   }
 
   toggleFavorite(car: Car): void {
-    const favorites = this.getFavorites();
-    
-    if (this.isFavorite(car)) {
-      const index = favorites.findIndex(fav => fav.id === car.id);
-      favorites.splice(index, 1);
-    } else {
-      favorites.push(car);
+    const user = this.userService.currentUserValue;
+    if (!user) {
+      alert('გთხოვთ გაიაროთ ავტორიზაცია');
+      return;
     }
 
-    localStorage.setItem('favorites', JSON.stringify(favorites));
-  }
-
-  private getFavorites(): Car[] {
-    const favoritesJson = localStorage.getItem('favorites');
-    return favoritesJson ? JSON.parse(favoritesJson) : [];
+    if (this.isFavorite(car)) {
+      console.log(`Removing car ${car.id} from favorites for user ${user.phoneNumber}`);
+      this.favoriteService.removeFavorite(user.phoneNumber, car.id).subscribe({
+        next: () => {
+          console.log('Successfully removed from favorites');
+          this.favorites = this.favorites.filter(f => f.id !== car.id);
+          this.loadFavorites();
+        },
+        error: (error) => {
+          console.error('Error removing favorite:', error);
+          alert('ვერ მოხერხდა ფავორიტებიდან წაშლა');
+        }
+      });
+    } else {
+      // Add to favorites
+      this.favoriteService.postFavorite(user.phoneNumber, car.id).subscribe({
+        next: () => {
+          console.log('Added to favorites');
+          this.loadFavorites();
+        },
+        error: (error) => {
+          console.error('Error adding favorite:', error);
+          alert('ვერ მოხერხდა ფავორიტებში დამატება');
+        }
+      });
+    }
   }
 }

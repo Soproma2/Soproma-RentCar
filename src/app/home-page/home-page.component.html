@@ -103,8 +103,9 @@
   <div *ngIf="filteredCars.length > 0; else noCars" class="car-grid">
 
     <div *ngFor="let car of filteredCars" class="car-card">
-      <div class="favorite-icon" (click)="toggleFavorite(car)" [class.favorited]="isFavorite(car)">
-        {{ isFavorite(car) ? '❤️' : '🤍' }}
+      <div class="favorite-icon" (click)="toggleFavorite(car)">
+        <span *ngIf="isFavorite(car)" class="remove-favorite" title="ფავორიტებიდან წაშლა">❤️</span>
+        <span *ngIf="!isFavorite(car)" class="add-favorite" title="ფავორიტებში დამატება">🤍</span>
       </div>
       <div class="car-image">
         <img
