@@ -22,6 +22,7 @@ export class CarPageComponent implements OnInit {
   totalPages: number = 1;
   isFavorite: boolean = false;
   phoneNumber: number = 0;  // Add this property
+  selectedImage: string = '';
 
   constructor(
     private route: ActivatedRoute, 
@@ -36,11 +37,19 @@ export class CarPageComponent implements OnInit {
     if (id) {
       this.carService.getCarById(+id).subscribe((car) => {
         this.car = car;
+        if (this.car) {
+          this.selectedImage = this.car.imageUrl1;
+        }
       });
     }
     this.postCarRental()
   }
 
+  setSelectedImage(imageUrl: string | undefined) {
+    if (imageUrl) {
+      this.selectedImage = imageUrl;
+    }
+  }
 
   private getFavorites(): Car[] {
     const favoritesJson = localStorage.getItem('favorites');
