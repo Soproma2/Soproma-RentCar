@@ -1,12 +1,12 @@
-// ...existing imports...
+
 import { NgModule } from '@angular/core';
-import { RentalService } from './services/rental.service';
+import { CarRentalService } from '../app/services/car-rental.service';
 
 @NgModule({
-  // ...existing configuration...
+ 
   providers: [
-    // ...existing providers...
-    RentalService
+    
+    CarRentalService
   ],
 })
 export class AppModule { }
