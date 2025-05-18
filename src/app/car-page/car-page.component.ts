@@ -7,7 +7,8 @@ import { FormsModule } from '@angular/forms';
 import { CarRentalService } from '../services/car-rental.service';
 import { Ipurchase } from '../models/purchase.mode';
 import { Observable } from 'rxjs';
-
+import { UserService } from '../services/user.service';
+ 
 @Component({
   selector: 'app-car-page',
   templateUrl: './car-page.component.html',
@@ -21,17 +22,19 @@ export class CarPageComponent implements OnInit {
   pageSize: number = 10;
   totalPages: number = 1;
   isFavorite: boolean = false;
-  phoneNumber: number = 0;  // Add this property
   selectedImage: string = '';
-
+  isProcessingRental: boolean = false;
+  rentalError: string = '';
+  rentalSuccess: boolean = false;
+ 
   constructor(
-    private route: ActivatedRoute, 
-    private carService: CarService, 
+    private route: ActivatedRoute,
+    private carService: CarService,
     private carRentalService: CarRentalService,
+    private userService: UserService,
     private router: Router
   ) {}
-
-  carRental: Ipurchase[]=[]
+ 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
@@ -42,23 +45,26 @@ export class CarPageComponent implements OnInit {
         }
       });
     }
-    this.postCarRental()
   }
-
+ 
   setSelectedImage(imageUrl: string | undefined) {
     if (imageUrl) {
       this.selectedImage = imageUrl;
     }
   }
-
+ 
+  onImageError(event: any) {
+    // Set the fallback image when the original image fails to load
+    event.target.src = 'assets/images/car.jfif';
+  }
+ 
   private getFavorites(): Car[] {
     const favoritesJson = localStorage.getItem('favorites');
     return favoritesJson ? JSON.parse(favoritesJson) : [];
   }
-
+ 
   calculateTotalPrice(): number {
     if (this.car) {
-
       const price =
         typeof this.car.price === 'number'
           ? this.car.price
@@ -71,83 +77,68 @@ export class CarPageComponent implements OnInit {
         typeof this.rentalDays === 'number'
           ? this.rentalDays
           : parseInt(this.rentalDays as any) || 1;
-
-   
+ 
       const totalPrice = price * Math.max(multiplier, 1) * days;
       return Math.round(totalPrice * 100) / 100;
     }
     return 0;
   }
-
-  //  private setUserPhoneNumber(): void {
-
-  //   if (this.userService.isLoggedIn()) {
-
-  //     const currentUser = this.userService.currentUserValue;
-
-  //     if (currentUser?.phoneNumber) {
-  //       this.setPhoneNumberInForm(currentUser.phoneNumber);
-  //     } else {
-
-  //       try {
-  //         const savedUserString = localStorage.getItem('currentUser');
-  //         if (
-  //           savedUserString &&
-  //           savedUserString !== 'undefined' &&
-  //           savedUserString !== 'null'
-  //         ) {
-  //           const savedUser = JSON.parse(savedUserString);
-  //           if (savedUser?.phoneNumber) {
-  //             this.setPhoneNumberInForm(savedUser.phoneNumber);
-  //           }
-  //         }
-  //       } catch (error) {
-  //         console.error('Error getting phone number from storage:', error);
-  //         this.redirectToLogin();
-  //       }
-  //     }
-  //   } else {
-  //     console.log('User not logged in, redirecting to login');
-  //     this.redirectToLogin();
-  //   }
-  // }
-
-  // private setPhoneNumberInForm(phoneNumber: string): void {
-
-  //   this.carForm.patchValue({
-  //     ownerPhoneNumber: phoneNumber,
-  //   });
-
-
-  //   this.carForm.get('ownerPhoneNumber')?.disable();
-
-  //   console.log('Phone number set and locked:', phoneNumber);
-  // }
-
-
-
-postCarRental() {
-  if (this.car) {
-    const purchase: Ipurchase = {
-      carId: this.car.id,
-      phoneNumber: this.phoneNumber,
-      multiplier: this.car.multiplier
-    };
-    
-    this.carRentalService.postPurchase(purchase).subscribe({
-      next: (response: any) => {
-        this.carRental.push(response as Ipurchase);
-        console.log(response);
-        this.router.navigate(['/profile']);
-      },
-      error: (error) => {
-        console.error('Error posting rental:', error);
-      }
-    });
+ 
+  postCarRental() {
+    if (!this.car) return;
+ 
+    // Check if user is logged in
+    if (!this.userService.isLoggedIn()) {
+      alert('გთხოვთ გაიაროთ ავტორიზაცია მანქანის დაჯავშნამდე');
+      this.router.navigate(['/login']);
+      return;
+    }
+ 
+    const currentUser = this.userService.currentUserValue;
+    if (!currentUser?.phoneNumber) {
+      alert(
+        'მომხმარებლის მონაცემები არ არის ხელმისაწვდომი, გთხოვთ გაიაროთ ავტორიზაცია ხელახლა'
+      );
+      this.router.navigate(['/login']);
+      return;
+    }
+ 
+    this.isProcessingRental = true;
+    this.rentalError = '';
+ 
+    this.carRentalService
+      .postPurchase(currentUser.phoneNumber, this.car.id, this.car.multiplier)
+      .subscribe({
+        next: (response) => {
+          console.log('Car rental successful:', response);
+ 
+          // Save rental data to local storage as a backup
+          const rental = {
+            id: new Date().getTime().toString(),
+            car: this.car as Car,
+            totalPrice: this.calculateTotalPrice(),
+            days: this.rentalDays,
+            startDate: new Date(),
+            endDate: new Date(
+              new Date().setDate(new Date().getDate() + this.rentalDays)
+            ),
+          };
+          this.carRentalService.saveRental(rental);
+ 
+          this.rentalSuccess = true;
+          setTimeout(() => {
+            this.router.navigate(['/profile']);
+          }, 1500);
+        },
+        error: (error) => {
+          console.error('Error posting rental:', error);
+          this.rentalError =
+            error.error || 'დაჯავშნა ვერ მოხერხდა, გთხოვთ სცადოთ მოგვიანებით';
+          this.isProcessingRental = false;
+        },
+        complete: () => {
+          this.isProcessingRental = false;
+        },
+      });
   }
-}
-
-
-
-
 }

@@ -1,80 +1,113 @@
 <div *ngIf="car" class="car-detail-container">
-    <div class="image-gallery">
-        <img [src]="selectedImage || car.imageUrl1" [alt]="car.brand + ' ' + car.model" class="main-image">
-        <div class="thumbnail-container">
-            <img [src]="car.imageUrl1" 
-                 [alt]="car.brand + ' ' + car.model" 
-                 class="thumbnail"
-                 (click)="setSelectedImage(car.imageUrl1)"
-                 [class.active]="selectedImage === car.imageUrl1">
-            <img *ngIf="car.imageUrl2" 
-                 [src]="car.imageUrl2" 
-                 [alt]="car.brand + ' ' + car.model" 
-                 class="thumbnail"
-                 (click)="setSelectedImage(car.imageUrl2)"
-                 [class.active]="selectedImage === car.imageUrl2">
-            <img *ngIf="car.imageUrl3" 
-                 [src]="car.imageUrl3" 
-                 [alt]="car.brand + ' ' + car.model" 
-                 class="thumbnail"
-                 (click)="setSelectedImage(car.imageUrl3)"
-                 [class.active]="selectedImage === car.imageUrl3">
-        </div>
+  <div class="image-gallery">
+    <img
+      [src]="selectedImage || car.imageUrl1 || 'assets/images/car.jfif'"
+      [alt]="car.brand + ' ' + car.model"
+      class="main-image"
+      (error)="onImageError($event)"
+    />
+    <div class="thumbnail-container">
+      <img
+        [src]="car.imageUrl1 || 'assets/images/car.jfif'"
+        [alt]="car.brand + ' ' + car.model"
+        class="thumbnail"
+        (click)="setSelectedImage(car.imageUrl1)"
+        [class.active]="selectedImage === car.imageUrl1"
+        (error)="onImageError($event)"
+      />
+      <img
+        *ngIf="car.imageUrl2"
+        [src]="car.imageUrl2"
+        [alt]="car.brand + ' ' + car.model"
+        class="thumbnail"
+        (click)="setSelectedImage(car.imageUrl2)"
+        [class.active]="selectedImage === car.imageUrl2"
+        (error)="onImageError($event)"
+      />
+      <img
+        *ngIf="car.imageUrl3"
+        [src]="car.imageUrl3"
+        [alt]="car.brand + ' ' + car.model"
+        class="thumbnail"
+        (click)="setSelectedImage(car.imageUrl3)"
+        [class.active]="selectedImage === car.imageUrl3"
+        (error)="onImageError($event)"
+      />
     </div>
-
-    <div class="details-section">
-        <h2>{{ car.brand }} {{ car.model }}</h2>
-        <p class="year">{{ car.year }}</p>
-
-        <div class="specifications">
-            <div class="spec-item">
-                <span class="spec-label">მდებარეობა:</span>
-                <span class="spec-value">{{ car.city }}</span>
-            </div>
-            <div class="spec-item">
-                <span class="spec-label">გამოშვების წელი:</span>
-                <span class="spec-value">{{ car.year }}</span>
-            </div>
-            <div class="spec-item">
-                <span class="spec-label">ტრანსმისია:</span>
-                <span class="spec-value">{{ car.transmission }}</span>
-            </div>
-            <div class="spec-item">
-                <span class="spec-label">ტევადობა:</span>
-                <span class="spec-value">{{ car.capacity }} კაცი</span>
-            </div>
-            <div class="spec-item">
-                <span class="spec-label">საწვავის ავზი:</span>
-                <span class="spec-value">{{ car.fuelCapacity }}L</span>
-            </div>
-            <div class="spec-item">
-                <span class="spec-label">ფასი:</span>
-                <span class="spec-value price">{{ car.price * car.multiplier }}&#8382; / დღე</span>
-            </div>
-        </div>
-
-        <div class="rent-days-selector">
-            <div class="days-input-group">
-                <label for="days">დღეების რაოდენობა:</label>
-                <div class="input-wrapper">
-                    <input 
-                        type="number" 
-                        id="days" 
-                        name="days" 
-                        [(ngModel)]="rentalDays" 
-                        class="days-input"
-                    >
-                    <span class="days-suffix">დღე</span>
-                </div>
-            </div>
-            
-            <div class="total-price">
-                <h3>ჯამური ფასი: {{ calculateTotalPrice() }}&#8382;</h3>
-            </div>
-        </div>
-
-        <div class="action-buttons">
-            <button class="rent-button" (click)="postCarRental()">დაჯავშნა</button>
-        </div>
+  </div>
+ 
+  <div class="details-section">
+    <h2>{{ car.brand }} {{ car.model }}</h2>
+    <p class="year">{{ car.year }}</p>
+ 
+    <div class="specifications">
+      <div class="spec-item">
+        <span class="spec-label">მდებარეობა:</span>
+        <span class="spec-value">{{ car.city }}</span>
+      </div>
+      <div class="spec-item">
+        <span class="spec-label">გამოშვების წელი:</span>
+        <span class="spec-value">{{ car.year }}</span>
+      </div>
+      <div class="spec-item">
+        <span class="spec-label">ტრანსმისია:</span>
+        <span class="spec-value">{{ car.transmission }}</span>
+      </div>
+      <div class="spec-item">
+        <span class="spec-label">ტევადობა:</span>
+        <span class="spec-value">{{ car.capacity }} კაცი</span>
+      </div>
+      <div class="spec-item">
+        <span class="spec-label">საწვავის ავზი:</span>
+        <span class="spec-value">{{ car.fuelCapacity }}L</span>
+      </div>
+      <div class="spec-item">
+        <span class="spec-label">ფასი:</span>
+        <span class="spec-value price"
+          >{{ car.price * car.multiplier }}&#8382; / დღე</span
+        >
+      </div>
     </div>
+ 
+    <div class="rent-days-selector">
+      <div class="days-input-group">
+        <label for="days">დღეების რაოდენობა:</label>
+        <div class="input-wrapper">
+          <input
+            type="number"
+            id="days"
+            name="days"
+            [(ngModel)]="rentalDays"
+            class="days-input"
+          />
+          <span class="days-suffix">დღე</span>
+        </div>
+      </div>
+ 
+      <div class="total-price">
+        <h3>ჯამური ფასი: {{ calculateTotalPrice() }}&#8382;</h3>
+      </div>
+ 
+      <div class="action-buttons">
+        <button
+          class="rent-button"
+          (click)="postCarRental()"
+          [disabled]="isProcessingRental || rentalSuccess"
+        >
+          <span *ngIf="!isProcessingRental && !rentalSuccess">დაჯავშნა</span>
+          <span *ngIf="isProcessingRental">მიმდინარეობს დაჯავშნა...</span>
+          <span *ngIf="rentalSuccess">დაჯავშნა წარმატებულია!</span>
+        </button>
+ 
+        <div *ngIf="rentalError" class="rental-error">
+          {{ rentalError }}
+        </div>
+ 
+        <div *ngIf="rentalSuccess" class="rental-success">
+          მანქანა წარმატებით დაჯავშნილია! მიმდინარეობს პროფილის გვერდზე
+          გადამისამართება...
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

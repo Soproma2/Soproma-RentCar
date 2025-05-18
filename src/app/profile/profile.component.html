@@ -1,12 +1,12 @@
 <div class="profile-container">
   <div class="user-info">
     <h2>პროფილი</h2>
-
+ 
     <!-- Debug info - can remove after fixing -->
     <div *ngIf="!user" class="alert alert-info">
       მომხმარებლის მონაცემების ჩატვირთვა...
     </div>
-
+ 
     <div class="user-details">
       <div class="detail-item">
         <span class="label">სახელი:</span>
@@ -28,24 +28,47 @@
       </div>
     </div>
   </div>
-
-  <!-- <div class="rental-history">
+ 
+  <div class="rental-history">
     <h3>ნაქირავები მანქანები</h3>
     <div class="rentals-grid" *ngIf="rentedCars.length > 0">
-      <div class="rental-card" *ngFor="let car of rentedCars">
+      <div class="rental-card" *ngFor="let rental of rentedCars">
         <div class="car-image">
-          <img [src]="car.imageUrl1" alt="car image">
+          <!-- Display car image if car data is available -->
+          <img
+            *ngIf="rental.car"
+            [src]="rental.car.imageUrl1 || 'assets/images/car.jfif'"
+            alt="car image"
+          />
+          <!-- Placeholder if car data is not yet loaded -->
+          <img
+            *ngIf="!rental.car"
+            src="assets/images/car.jfif"
+            alt="Loading car data..."
+          />
         </div>
         <div class="rental-details">
-          <h4>{{car.brand}} {{car.model}}</h4>
-          <div class="detail-row">
-            <span>წელი: {{car.year}}</span>
+          <!-- Car details display -->
+          <h4 *ngIf="rental.car">
+            {{ rental.car.brand }} {{ rental.car.model }}
+          </h4>
+          <h4 *ngIf="!rental.car">ინფორმაციის ჩატვირთვა...</h4>
+ 
+          <div class="detail-row" *ngIf="rental.car">
+            <span>წელი: {{ rental.car.year }}</span>
           </div>
-          <div class="car-price">
-            {{car.dayPrice}}₾ დღეში
+ 
+          <div class="car-price" *ngIf="rental.car">
+            {{
+              rental.car.price *
+                (rental.multiplier || rental.car.multiplier || 1)
+            }}₾ დღეში
           </div>
+ 
           <div class="rental-actions">
-            <a [routerLink]="['/cars', car.id]" class="view-details">დეტალები</a>
+            <a [routerLink]="['/car', rental.carId]" class="view-details"
+              >დეტალები</a
+            >
           </div>
         </div>
       </div>
@@ -53,11 +76,11 @@
     <div class="no-rentals" *ngIf="rentedCars.length === 0">
       თქვენ ჯერ არ გაქვთ ნაქირავები მანქანები
     </div>
-  </div> -->
-
+  </div>
+ 
   <div class="favorites-section">
     <h3>ჩემი ფავორიტები</h3>
-
+ 
     <div *ngIf="favorites.length > 0; else noFavorites" class="favorites-grid">
       <div *ngFor="let car of favorites" class="favorite-car-card">
         <div class="favorite-car-image">
@@ -80,15 +103,15 @@
         </div>
       </div>
     </div>
-
+ 
     <ng-template #noFavorites>
       <p class="no-favorites-message">თქვენ ჯერ არ გაქვთ ფავორიტი მანქანები</p>
     </ng-template>
   </div>
-
+ 
   <div class="uploaded-cars-section">
     <h3>ჩემს მიერ ატვირთული მანქანები</h3>
-
+ 
     <div
       *ngIf="uploadedCars?.length; else noUploads"
       class="uploaded-cars-grid"
@@ -112,7 +135,7 @@
         </div>
       </div>
     </div>
-
+ 
     <ng-template #noUploads>
       <p class="no-uploads-message">თქვენ ჯერ არ გაქვთ ატვირთული მანქანები</p>
     </ng-template>

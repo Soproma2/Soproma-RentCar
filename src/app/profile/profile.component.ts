@@ -7,7 +7,7 @@ import { CarService } from '../car.service';
 import { HttpClient } from '@angular/common/http';
 import { FavoriteService } from '../services/favorite.service';
 import { Ipurchase } from '../models/purchase.mode';
-
+ 
 @Component({
   selector: 'app-profile',
   standalone: true,
@@ -21,17 +21,17 @@ export class ProfileComponent implements OnInit {
   favorites: Car[] = [];
   uploadedCars: any[] = [];
   rentedCars: Ipurchase[] = [];
-
+ 
   constructor(
     public userService: UserService,
-    private favoriteService:FavoriteService,
+    private favoriteService: FavoriteService,
     private carService: CarService,
     private http: HttpClient
   ) {}
-
+ 
   ngOnInit(): void {
     this.user = this.userService.currentUserValue;
-
+ 
     if (this.userService.isLoggedIn()) {
       this.userService.getUserDetails().subscribe({
         next: (userData) => {
@@ -45,29 +45,27 @@ export class ProfileComponent implements OnInit {
       });
     }
   }
-
+ 
   /**
    * Loads all user-related data including uploaded cars
    */
   private loadUserData(): void {
     if (this.user?.phoneNumber) {
       this.loadUploadedCars();
-      // this.loadRentedCars();
+      this.loadRentedCars();
       this.loadFavorites();
     }
   }
-
-
+ 
   private loadUploadedCars(): void {
     const token = localStorage.getItem('token');
     if (!token || !this.user?.phoneNumber) {
       console.error('No token or phone number available to load uploaded cars');
       return;
     }
-
  
     const apiUrl = `https://rentcar.stepprojects.ge/api/Car`;
-
+ 
     this.http
       .get<any[]>(apiUrl, {
         headers: { Authorization: `Bearer ${token}` },
@@ -83,22 +81,21 @@ export class ProfileComponent implements OnInit {
             'Failed to load user uploaded cars with direct query:',
             err
           );
-
-
+ 
           this.tryFilterEndpoint();
         },
       });
   }
-
+ 
   /**
    * Alternative approach using the filter endpoint
    */
   private tryFilterEndpoint(): void {
     const token = localStorage.getItem('token');
     if (!token || !this.user?.phoneNumber) return;
-
+ 
     const filterUrl = `https://rentcar.stepprojects.ge/api/Car/filter`;
-
+ 
     // The filter endpoint might expect a POST with filter criteria
     this.http
       .post<any>(
@@ -118,22 +115,22 @@ export class ProfileComponent implements OnInit {
         },
         error: (err) => {
           console.error('Failed to load user uploaded cars via filter:', err);
-
+ 
           // Last resort - try the paginated endpoint
           this.tryPaginatedEndpoint();
         },
       });
   }
-
+ 
   /**
    * Another alternative approach using the paginated endpoint
    */
   private tryPaginatedEndpoint(): void {
     const token = localStorage.getItem('token');
     if (!token || !this.user?.phoneNumber) return;
-
+ 
     const paginatedUrl = `https://rentcar.stepprojects.ge/api/Car/paginated`;
-
+ 
     this.http
       .get<any>(paginatedUrl, {
         headers: { Authorization: `Bearer ${token}` },
@@ -156,46 +153,73 @@ export class ProfileComponent implements OnInit {
         },
       });
   }
-
-  
-  // private loadRentedCars(): void {
-  //   const token = localStorage.getItem('token');
-  //   if (!token || !this.user?.phoneNumber) {
-  //     console.error('No token or phone number available to load rented cars');
-  //     return;
-  //   }
-
-  //   const apiUrl = `https://rentcar.stepprojects.ge/api/Purchase/${this.user.phoneNumber}`;
-
-  //   this.http.get<Ipurchase[]>(apiUrl, {
-  //     headers: { Authorization: `Bearer ${token}` }
-  //   }).subscribe({
-  //     next: (rentals) => {
-  //       console.log('Loaded user rented cars:', rentals);
-  //       this.rentedCars = rentals;
-  //     },
-  //     error: (err) => {
-  //       console.error('Failed to load rented cars:', err);
-  //       this.rentedCars = [];
-  //     }
-  //   });
-  // }
-
-
+ 
+  private loadRentedCars(): void {
+    const token = localStorage.getItem('token');
+    if (!token || !this.user?.phoneNumber) {
+      console.error('No token or phone number available to load rented cars');
+      return;
+    }
+ 
+    const apiUrl = `https://rentcar.stepprojects.ge/Purchase/${this.user.phoneNumber}`;
+ 
+    this.http
+      .get<any>(apiUrl, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .subscribe({
+        next: (response) => {
+          console.log('Loaded user rented cars:', response);
+ 
+          if (response === 'No products') {
+            this.rentedCars = [];
+          } else {
+            // Handle the response data
+            if (Array.isArray(response)) {
+              // If response is already an array of purchases with car data
+              this.rentedCars = response;
+            } else {
+              this.rentedCars = [];
+            }
+ 
+            // If purchases don't include car data, fetch each car
+            this.rentedCars.forEach((purchase) => {
+              if (purchase.carId && !purchase.car) {
+                this.carService.getCarById(purchase.carId).subscribe({
+                  next: (carData) => {
+                    purchase.car = carData;
+                  },
+                  error: (err) => {
+                    console.error(
+                      `Failed to load car details for ID ${purchase.carId}:`,
+                      err
+                    );
+                  },
+                });
+              }
+            });
+          }
+        },
+        error: (err) => {
+          console.error('Failed to load rented cars:', err);
+          this.rentedCars = [];
+        },
+      });
+  }
+ 
   // deleteCar(carId: number): void {
   //   if (!confirm('ნამდვილად გსურთ ამ მანქანის წაშლა?')) {
   //     return;
   //   }
-
+ 
   //   const token = localStorage.getItem('token');
   //   if (!token) {
   //     console.error('No token available to delete car');
   //     return;
   //   }
-
-
+ 
   //   const apiUrl = `https://rentcar.stepprojects.ge/api/Car/${carId}`;
-
+ 
   //   this.http
   //     .delete(apiUrl, {
   //       headers: { Authorization: `Bearer ${token}` },
@@ -203,7 +227,7 @@ export class ProfileComponent implements OnInit {
   //     .subscribe({
   //       next: () => {
   //         console.log('Car deleted successfully');
-
+ 
   //         this.uploadedCars = this.uploadedCars.filter(
   //           (car) => car.id !== carId
   //         );
@@ -214,34 +238,36 @@ export class ProfileComponent implements OnInit {
   //       },
   //     });
   // }
-
+ 
   loadFavorites() {
     if (this.user?.phoneNumber) {
       this.favoriteService.getFavorite(this.user.phoneNumber).subscribe({
         next: (response) => {
           this.favorites = response;
         },
-        error: error => {
+        error: (error) => {
           console.error(error.message);
-        }
+        },
       });
     }
   }
-
+ 
   addFavorite(carId: number) {
     if (this.user?.phoneNumber) {
-      this.favoriteService.postFavorite(this.user.phoneNumber, carId).subscribe({
-        next: () => {
-          console.log('Car added to favorites successfully');
-          this.loadFavorites(); 
-        },
-        error: error => {
-          console.error('Failed to add favorite:', error);
-        }
-      });
+      this.favoriteService
+        .postFavorite(this.user.phoneNumber, carId)
+        .subscribe({
+          next: () => {
+            console.log('Car added to favorites successfully');
+            this.loadFavorites();
+          },
+          error: (error) => {
+            console.error('Failed to add favorite:', error);
+          },
+        });
     }
   }
-
+ 
   // removeFavorite(car: Car) {
   //   this.favorites = this.favorites.filter((f) => f.id !== car.id);
   //   localStorage.setItem('favorites', JSON.stringify(this.favorites));
