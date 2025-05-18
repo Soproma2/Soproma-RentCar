@@ -23,6 +23,8 @@ export class RegisterComponent {
   loading = false;
   errorMessage = '';
   successMessage = '';
+  showPassword: boolean = false;
+  showConfirmPassword: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -45,6 +47,13 @@ export class RegisterComponent {
     );
   }
 
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleConfirmPasswordVisibility() {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
 
   passwordMatchValidator(form: FormGroup) {
     const password = form.get('password')?.value;

@@ -23,6 +23,7 @@ export class LoginComponent implements OnInit {
   successMessage: string = '';
   loading: boolean = false;
   returnUrl: string = '/';
+  showPassword: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -41,6 +42,10 @@ export class LoginComponent implements OnInit {
 
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
     console.log('Return URL after login will be:', this.returnUrl);
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
   }
 
   onSubmit() {

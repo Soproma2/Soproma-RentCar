@@ -138,3 +138,38 @@ small {
     border-radius: 12px;
   }
 }
+
+.password-input {
+  background-repeat: no-repeat !important;
+  background-position: calc(100% - 10px) center !important;
+  background-size: 20px !important;
+  cursor: pointer;
+}
+
+.password-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.password-input-container .form-control {
+  width: 100%;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  z-index: 1;
+  display: block;
+}
+
+.password-toggle img {
+  display: block;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}

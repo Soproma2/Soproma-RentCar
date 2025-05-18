@@ -31,6 +31,7 @@ label {
   font-size: 1rem;
   background: #ffffff;
   transition: border-color 0.3s, box-shadow 0.3s;
+  width: 100%;
 }
 
 .form-control:focus {
@@ -78,6 +79,37 @@ small {
   font-size: 0.9rem;
   margin: 0.5rem 0;
   text-align: center;
+}
+
+.password-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  z-index: 1;
+  display: block;
+}
+
+.password-toggle img {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+
+.password-input {
+  background-repeat: no-repeat;
+  background-position: calc(100% - 10px) center;
+  background-size: 20px;
+  padding-right: 35px;
+  cursor: pointer;
 }
 
 /* 🔁 RESPONSIVE DESIGN */

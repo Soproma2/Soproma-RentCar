@@ -7,7 +7,7 @@
       type="text"
       formControlName="phoneNumber"
       class="form-control"
-      placeholder="მაგ: 555123456"
+      placeholder="შეიყვანე ტელეფონის ნომერი"
     />
     <div
       *ngIf="
@@ -43,7 +43,17 @@
 
   <div class="form-group">
     <label>პაროლი</label>
-    <input type="password" formControlName="password" class="form-control" />
+    <div class="password-input-container">
+      <input 
+        [type]="showPassword ? 'text' : 'password'" 
+        formControlName="password" 
+        class="form-control"
+      />
+      <div class="password-toggle" (click)="togglePasswordVisibility()">
+        <img *ngIf="showPassword" src="../../../assets/images/eye.png" alt="hide" width="20">
+        <img *ngIf="!showPassword" src="../../../assets/images/eye-closed.png" alt="show" width="20">
+      </div>
+    </div>
     <div
       *ngIf="
         loginForm.get('password')?.invalid && loginForm.get('password')?.touched
