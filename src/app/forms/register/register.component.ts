@@ -107,7 +107,7 @@ export class RegisterComponent {
         console.error('რეგისტრაციის შეცდომა:', err);
 
         if (err.error?.errors) {
-          // Format validation errors from API
+
           const errors = err.error.errors;
           this.errorMessage = Object.keys(errors)
             .map((key) => errors[key].join(', '))

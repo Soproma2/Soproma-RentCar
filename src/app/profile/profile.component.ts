@@ -46,9 +46,7 @@ export class ProfileComponent implements OnInit {
     }
   }
  
-  /**
-   * Loads all user-related data including uploaded cars
-   */
+  
   private loadUserData(): void {
     if (this.user?.phoneNumber) {
       this.loadUploadedCars();
@@ -87,16 +85,14 @@ export class ProfileComponent implements OnInit {
       });
   }
  
-  /**
-   * Alternative approach using the filter endpoint
-   */
+ 
   private tryFilterEndpoint(): void {
     const token = localStorage.getItem('token');
     if (!token || !this.user?.phoneNumber) return;
  
     const filterUrl = `https://rentcar.stepprojects.ge/api/Car/filter`;
  
-    // The filter endpoint might expect a POST with filter criteria
+    
     this.http
       .post<any>(
         filterUrl,
@@ -108,7 +104,7 @@ export class ProfileComponent implements OnInit {
       .subscribe({
         next: (response) => {
           console.log('Loaded user uploaded cars via filter:', response);
-          // The response might contain the cars array in a specific property
+          
           this.uploadedCars = Array.isArray(response)
             ? response
             : response.cars || response.items || response.data || [];
@@ -116,15 +112,13 @@ export class ProfileComponent implements OnInit {
         error: (err) => {
           console.error('Failed to load user uploaded cars via filter:', err);
  
-          // Last resort - try the paginated endpoint
+          
           this.tryPaginatedEndpoint();
         },
       });
   }
  
-  /**
-   * Another alternative approach using the paginated endpoint
-   */
+  
   private tryPaginatedEndpoint(): void {
     const token = localStorage.getItem('token');
     if (!token || !this.user?.phoneNumber) return;
@@ -137,13 +131,13 @@ export class ProfileComponent implements OnInit {
         params: {
           ownerPhoneNumber: this.user.phoneNumber,
           pageNumber: '1',
-          pageSize: '50', // Get a reasonable amount of cars
+          pageSize: '50', 
         },
       })
       .subscribe({
         next: (response) => {
           console.log('Loaded user uploaded cars via pagination:', response);
-          // The paginated response typically has the items in a property
+ 
           this.uploadedCars =
             response.items || response.data || response.cars || [];
         },
@@ -174,15 +168,15 @@ export class ProfileComponent implements OnInit {
           if (response === 'No products') {
             this.rentedCars = [];
           } else {
-            // Handle the response data
+  
             if (Array.isArray(response)) {
-              // If response is already an array of purchases with car data
+ 
               this.rentedCars = response;
             } else {
               this.rentedCars = [];
             }
  
-            // If purchases don't include car data, fetch each car
+ 
             this.rentedCars.forEach((purchase) => {
               if (purchase.carId && !purchase.car) {
                 this.carService.getCarById(purchase.carId).subscribe({
@@ -207,38 +201,7 @@ export class ProfileComponent implements OnInit {
       });
   }
  
-  // deleteCar(carId: number): void {
-  //   if (!confirm('ნამდვილად გსურთ ამ მანქანის წაშლა?')) {
-  //     return;
-  //   }
- 
-  //   const token = localStorage.getItem('token');
-  //   if (!token) {
-  //     console.error('No token available to delete car');
-  //     return;
-  //   }
- 
-  //   const apiUrl = `https://rentcar.stepprojects.ge/api/Car/${carId}`;
- 
-  //   this.http
-  //     .delete(apiUrl, {
-  //       headers: { Authorization: `Bearer ${token}` },
-  //     })
-  //     .subscribe({
-  //       next: () => {
-  //         console.log('Car deleted successfully');
- 
-  //         this.uploadedCars = this.uploadedCars.filter(
-  //           (car) => car.id !== carId
-  //         );
-  //       },
-  //       error: (err) => {
-  //         console.error('Failed to delete car:', err);
-  //         alert('მანქანის წაშლა ვერ მოხერხდა. გთხოვთ სცადოთ მოგვიანებით.');
-  //       },
-  //     });
-  // }
- 
+  
   loadFavorites() {
     if (this.user?.phoneNumber) {
       this.favoriteService.getFavorite(this.user.phoneNumber).subscribe({
@@ -267,9 +230,4 @@ export class ProfileComponent implements OnInit {
         });
     }
   }
- 
-  // removeFavorite(car: Car) {
-  //   this.favorites = this.favorites.filter((f) => f.id !== car.id);
-  //   localStorage.setItem('favorites', JSON.stringify(this.favorites));
-  // }
 }

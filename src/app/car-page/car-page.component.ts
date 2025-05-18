@@ -54,7 +54,7 @@ export class CarPageComponent implements OnInit {
   }
  
   onImageError(event: any) {
-    // Set the fallback image when the original image fails to load
+   
     event.target.src = 'assets/images/car.jfif';
   }
  
@@ -87,7 +87,7 @@ export class CarPageComponent implements OnInit {
   postCarRental() {
     if (!this.car) return;
  
-    // Check if user is logged in
+  
     if (!this.userService.isLoggedIn()) {
       alert('გთხოვთ გაიაროთ ავტორიზაცია მანქანის დაჯავშნამდე');
       this.router.navigate(['/login']);
@@ -112,7 +112,7 @@ export class CarPageComponent implements OnInit {
         next: (response) => {
           console.log('Car rental successful:', response);
  
-          // Save rental data to local storage as a backup
+   
           const rental = {
             id: new Date().getTime().toString(),
             car: this.car as Car,

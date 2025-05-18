@@ -152,7 +152,7 @@ nav a:hover::before {
     bottom: 0;
   }
 
-  /* Burger animation when menu is open */
+  
   .burger-menu.active span:first-child {
     transform: rotate(45deg);
     top: 9px;

@@ -14,7 +14,7 @@ export class CarService {
 
   constructor(private http: HttpClient) {}
 
-  // Get paginated cars
+ 
   getCars(
     pageIndex: number = 1,
     pageSize: number = 10

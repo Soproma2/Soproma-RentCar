@@ -57,7 +57,7 @@ export class HomePageComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCities();
-    this.loadFavorites(); // Add this line
+    this.loadFavorites(); 
 
     this.route.queryParams.subscribe((params) => {
       this.filter.pageIndex = params['page'] ? parseInt(params['page']) : 1;

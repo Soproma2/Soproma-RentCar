@@ -53,7 +53,7 @@ export class CarRentalService {
     startDate: Date;
     endDate: Date;
   }) {
-    // This method is for local storage backup functionality
+ 
     const rentals = this.getStoredRentals();
     rentals.push(rental);
     localStorage.setItem('rentals', JSON.stringify(rentals));

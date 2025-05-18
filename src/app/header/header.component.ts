@@ -81,7 +81,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   logout(event: Event) {
     event.preventDefault();
-    this.isMenuOpen = false;  // Close menu when logging out
+    this.isMenuOpen = false;  
 
     this.userService.logout();
     localStorage.removeItem('isLoggedIn');

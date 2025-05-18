@@ -18,7 +18,7 @@ export class AppComponent implements OnInit {
   constructor(private userService: UserService) {}
 
   ngOnInit() {
-    // Check auth status on app load
+   
     if (!this.userService.isLoggedIn()) {
       console.log('App initialization: User not authenticated');
     } else {
