@@ -654,7 +654,7 @@ h1 {
 }
 
 .filter-container {
-  background: white;
+   background: linear-gradient(135deg, #f8f9fa, #e9ecef);
   border-radius: 20px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
   padding: 25px;
