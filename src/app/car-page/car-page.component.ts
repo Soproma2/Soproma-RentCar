@@ -4,7 +4,9 @@ import { CarService } from '../car.service';
 import { CommonModule } from '@angular/common';
 import { Car } from '../models/car.model';
 import { FormsModule } from '@angular/forms';
-import { RentalService, CarRental } from '../services/rental.service';
+import { CarRentalService } from '../services/car-rental.service';
+import { Ipurchase } from '../models/purchase.mode';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-car-page',
@@ -19,68 +21,30 @@ export class CarPageComponent implements OnInit {
   pageSize: number = 10;
   totalPages: number = 1;
   isFavorite: boolean = false;
+  phoneNumber: number = 0;  // Add this property
 
   constructor(
     private route: ActivatedRoute, 
     private carService: CarService, 
-    private rentalService: RentalService, 
+    private carRentalService: CarRentalService,
     private router: Router
   ) {}
 
+  carRental: Ipurchase[]=[]
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.carService.getCarById(+id).subscribe((car) => {
         this.car = car;
-        this.checkIfFavorite();
       });
     }
-    this.loadCarsWithPagination();
+    this.postCarRental()
   }
 
-  checkIfFavorite(): void {
-    if (this.car) {
-      const favorites = this.getFavorites();
-      this.isFavorite = favorites.some(fav => fav.id === this.car?.id);
-    }
-  }
-
-  toggleFavorite(): void {
-    if (!this.car) return;
-
-    const favorites = this.getFavorites();
-    
-    if (this.isFavorite) {
-      const index = favorites.findIndex(fav => fav.id === this.car?.id);
-      favorites.splice(index, 1);
-    } else {
-      favorites.push(this.car);
-    }
-
-    localStorage.setItem('favorites', JSON.stringify(favorites));
-    this.isFavorite = !this.isFavorite;
-  }
 
   private getFavorites(): Car[] {
     const favoritesJson = localStorage.getItem('favorites');
     return favoritesJson ? JSON.parse(favoritesJson) : [];
-  }
-
-  loadCarsWithPagination(pageIndex: number = 1): void {
-    this.pageIndex = pageIndex;
-    this.carService
-      .getCars(this.pageIndex, this.pageSize)
-      .subscribe((response) => {
- 
-        this.totalPages = response.totalPages;
-
-      });
-  }
-
-  changePage(newPage: number): void {
-    if (newPage >= 1 && newPage <= this.totalPages) {
-      this.loadCarsWithPagination(newPage);
-    }
   }
 
   calculateTotalPrice(): number {
@@ -106,26 +70,75 @@ export class CarPageComponent implements OnInit {
     return 0;
   }
 
-  rentCar(): void {
-    if (this.car) {
-      const rental: CarRental = {
-        id: Date.now().toString(), // Add unique ID using timestamp
-        car: {
-          id: this.car.id, // Add this line
-          brand: this.car.brand,
-          model: this.car.model,
-          city: this.car.city,
-          imageUrl1: this.car.imageUrl1
-        },
-        totalPrice: this.calculateTotalPrice(),
-        days: this.rentalDays,
-        startDate: new Date(),
-        endDate: new Date(Date.now() + this.rentalDays * 24 * 60 * 60 * 1000)
-      };
-      
-      this.rentalService.addRental(rental);
-      alert('მანქანა წარმატებით დაჯავშნილია!');
-      this.router.navigate(['/profile']);
-    }
+  //  private setUserPhoneNumber(): void {
+
+  //   if (this.userService.isLoggedIn()) {
+
+  //     const currentUser = this.userService.currentUserValue;
+
+  //     if (currentUser?.phoneNumber) {
+  //       this.setPhoneNumberInForm(currentUser.phoneNumber);
+  //     } else {
+
+  //       try {
+  //         const savedUserString = localStorage.getItem('currentUser');
+  //         if (
+  //           savedUserString &&
+  //           savedUserString !== 'undefined' &&
+  //           savedUserString !== 'null'
+  //         ) {
+  //           const savedUser = JSON.parse(savedUserString);
+  //           if (savedUser?.phoneNumber) {
+  //             this.setPhoneNumberInForm(savedUser.phoneNumber);
+  //           }
+  //         }
+  //       } catch (error) {
+  //         console.error('Error getting phone number from storage:', error);
+  //         this.redirectToLogin();
+  //       }
+  //     }
+  //   } else {
+  //     console.log('User not logged in, redirecting to login');
+  //     this.redirectToLogin();
+  //   }
+  // }
+
+  // private setPhoneNumberInForm(phoneNumber: string): void {
+
+  //   this.carForm.patchValue({
+  //     ownerPhoneNumber: phoneNumber,
+  //   });
+
+
+  //   this.carForm.get('ownerPhoneNumber')?.disable();
+
+  //   console.log('Phone number set and locked:', phoneNumber);
+  // }
+
+
+
+postCarRental() {
+  if (this.car) {
+    const purchase: Ipurchase = {
+      carId: this.car.id,
+      phoneNumber: this.phoneNumber,
+      multiplier: this.car.multiplier
+    };
+    
+    this.carRentalService.postPurchase().subscribe({
+      next: (response: any) => {
+        this.carRental.push(response as Ipurchase);
+        console.log(response);
+        this.router.navigate(['/profile']);
+      },
+      error: (error) => {
+        console.error('Error posting rental:', error);
+      }
+    });
   }
+}
+
+
+
+
 }

@@ -1,30 +1,29 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../services/user.service';
-import { CommonModule, DatePipe } from '@angular/common';
-import { RentalService, CarRental } from '../services/rental.service';
+import { CommonModule } from '@angular/common';
 import { Car } from '../models/car.model';
 import { RouterModule } from '@angular/router';
 import { CarService } from '../car.service';
 import { HttpClient } from '@angular/common/http';
 import { FavoriteService } from '../services/favorite.service';
+import { Ipurchase } from '../models/purchase.mode';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, DatePipe, RouterModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css',
 })
 export class ProfileComponent implements OnInit {
   userName: string = 'მომხმარებელი';
   user: any;
-  rentals: CarRental[] = [];
   favorites: Car[] = [];
   uploadedCars: any[] = [];
+  rentedCars: Ipurchase[] = [];
 
   constructor(
     public userService: UserService,
-    private rentalService: RentalService,
     private favoriteService:FavoriteService,
     private carService: CarService,
     private http: HttpClient
@@ -53,16 +52,12 @@ export class ProfileComponent implements OnInit {
   private loadUserData(): void {
     if (this.user?.phoneNumber) {
       this.loadUploadedCars();
+      // this.loadRentedCars();
       this.loadFavorites();
-      this.rentalService.getRentals().subscribe((rentals) => {
-        this.rentals = rentals;
-      });
     }
   }
 
-  /**
-   * Loads cars uploaded by the current user
-   */
+
   private loadUploadedCars(): void {
     const token = localStorage.getItem('token');
     if (!token || !this.user?.phoneNumber) {
@@ -70,7 +65,7 @@ export class ProfileComponent implements OnInit {
       return;
     }
 
-    // Try the base Car endpoint with ownerPhoneNumber as a filter parameter
+ 
     const apiUrl = `https://rentcar.stepprojects.ge/api/Car`;
 
     this.http
@@ -89,7 +84,7 @@ export class ProfileComponent implements OnInit {
             err
           );
 
-          // If the first approach fails, try the filter endpoint
+
           this.tryFilterEndpoint();
         },
       });
@@ -162,41 +157,63 @@ export class ProfileComponent implements OnInit {
       });
   }
 
-  /**
-   * Deletes a car by ID
-   */
-  deleteCar(carId: number): void {
-    if (!confirm('ნამდვილად გსურთ ამ მანქანის წაშლა?')) {
-      return;
-    }
+  
+  // private loadRentedCars(): void {
+  //   const token = localStorage.getItem('token');
+  //   if (!token || !this.user?.phoneNumber) {
+  //     console.error('No token or phone number available to load rented cars');
+  //     return;
+  //   }
 
-    const token = localStorage.getItem('token');
-    if (!token) {
-      console.error('No token available to delete car');
-      return;
-    }
+  //   const apiUrl = `https://rentcar.stepprojects.ge/api/Purchase/${this.user.phoneNumber}`;
 
-    // API endpoint to delete a car
-    const apiUrl = `https://rentcar.stepprojects.ge/api/Car/${carId}`;
+  //   this.http.get<Ipurchase[]>(apiUrl, {
+  //     headers: { Authorization: `Bearer ${token}` }
+  //   }).subscribe({
+  //     next: (rentals) => {
+  //       console.log('Loaded user rented cars:', rentals);
+  //       this.rentedCars = rentals;
+  //     },
+  //     error: (err) => {
+  //       console.error('Failed to load rented cars:', err);
+  //       this.rentedCars = [];
+  //     }
+  //   });
+  // }
 
-    this.http
-      .delete(apiUrl, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .subscribe({
-        next: () => {
-          console.log('Car deleted successfully');
-          // Remove the car from the list
-          this.uploadedCars = this.uploadedCars.filter(
-            (car) => car.id !== carId
-          );
-        },
-        error: (err) => {
-          console.error('Failed to delete car:', err);
-          alert('მანქანის წაშლა ვერ მოხერხდა. გთხოვთ სცადოთ მოგვიანებით.');
-        },
-      });
-  }
+
+  // deleteCar(carId: number): void {
+  //   if (!confirm('ნამდვილად გსურთ ამ მანქანის წაშლა?')) {
+  //     return;
+  //   }
+
+  //   const token = localStorage.getItem('token');
+  //   if (!token) {
+  //     console.error('No token available to delete car');
+  //     return;
+  //   }
+
+
+  //   const apiUrl = `https://rentcar.stepprojects.ge/api/Car/${carId}`;
+
+  //   this.http
+  //     .delete(apiUrl, {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     })
+  //     .subscribe({
+  //       next: () => {
+  //         console.log('Car deleted successfully');
+
+  //         this.uploadedCars = this.uploadedCars.filter(
+  //           (car) => car.id !== carId
+  //         );
+  //       },
+  //       error: (err) => {
+  //         console.error('Failed to delete car:', err);
+  //         alert('მანქანის წაშლა ვერ მოხერხდა. გთხოვთ სცადოთ მოგვიანებით.');
+  //       },
+  //     });
+  // }
 
   loadFavorites() {
     if (this.user?.phoneNumber) {
@@ -225,8 +242,8 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  removeFavorite(car: Car) {
-    this.favorites = this.favorites.filter((f) => f.id !== car.id);
-    localStorage.setItem('favorites', JSON.stringify(this.favorites));
-  }
+  // removeFavorite(car: Car) {
+  //   this.favorites = this.favorites.filter((f) => f.id !== car.id);
+  //   localStorage.setItem('favorites', JSON.stringify(this.favorites));
+  // }
 }

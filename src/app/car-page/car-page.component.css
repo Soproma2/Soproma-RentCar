@@ -146,33 +146,8 @@
     font-weight: bold;
   }
   
-  .days-range {
-    width: 100%;
-    height: 8px;
-    margin: 10px 0;
-    -webkit-appearance: none;
-    background: #ddd;
-    border-radius: 5px;
-    outline: none;
-  }
-  
-  .days-range::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #04AA6D;
-    cursor: pointer;
-  }
-  
-  .days-range::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #04AA6D;
-    cursor: pointer;
-  }
+
+
   
   .range-labels {
     display: flex;
@@ -230,5 +205,62 @@
   
   .heart-icon {
     font-size: 1.2rem;
+  }
+
+  .days-input-container {
+    margin: 20px 0;
+  }
+  
+  .days-input {
+    width: 120px;
+    padding: 12px 45px 12px 15px;
+    font-size: 18px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    -moz-appearance: textfield;
+  }
+  
+  .days-input::-webkit-outer-spin-button,
+  .days-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  .days-input:focus {
+    outline: none;
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+  }
+  
+  .days-suffix {
+    position: absolute;
+    right: 15px;
+    color: #718096;
+    font-size: 16px;
+    pointer-events: none;
+  }
+
+  .days-input-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: #f8f9fa;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+  
+  .days-input-group label {
+    font-size: 16px;
+    font-weight: 500;
+    color: #2d3748;
+    white-space: nowrap;
+  }
+  
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
   }
 
