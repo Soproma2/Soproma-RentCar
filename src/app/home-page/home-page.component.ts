@@ -23,7 +23,7 @@ export class HomePageComponent implements OnInit {
   pageSize: number = 12;
   totalPages: number = 1;
   totalItems: number = 0;
-  itemsPerPage = 12; // Add this property
+  itemsPerPage = 12;
 
   filter: CarFilter = {
     pageIndex: 1,
@@ -40,13 +40,7 @@ export class HomePageComponent implements OnInit {
 
   filtersApplied = false;
 
-  popularityOptions = [
-    { value: PopularityFilter.MOST_RENTED, label: 'ყველაზე ხშირად გაქირავებული' },
-    { value: PopularityFilter.MOST_VIEWED, label: 'ყველაზე ნახვადი' },
-    { value: PopularityFilter.BEST_RATED, label: 'საუკეთესო შეფასებით' }
-  ];
-
-  favorites: Car[] = [];  // Add this property
+  favorites: Car[] = [];
 
   constructor(
     private carService: CarService,
