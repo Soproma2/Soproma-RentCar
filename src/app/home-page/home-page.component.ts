@@ -278,21 +278,7 @@ export class HomePageComponent implements OnInit {
       return;
     }
 
-    if (this.isFavorite(car)) {
-      console.log(`Removing car ${car.id} from favorites for user ${user.phoneNumber}`);
-      this.favoriteService.removeFavorite(user.phoneNumber, car.id).subscribe({
-        next: () => {
-          console.log('Successfully removed from favorites');
-          this.favorites = this.favorites.filter(f => f.id !== car.id);
-          this.loadFavorites();
-        },
-        error: (error) => {
-          console.error('Error removing favorite:', error);
-          alert('ვერ მოხერხდა ფავორიტებიდან წაშლა');
-        }
-      });
-    } else {
-      // Add to favorites
+    if (!this.isFavorite(car)) {
       this.favoriteService.postFavorite(user.phoneNumber, car.id).subscribe({
         next: () => {
           console.log('Added to favorites');
