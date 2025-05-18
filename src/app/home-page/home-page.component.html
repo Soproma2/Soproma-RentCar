@@ -57,16 +57,12 @@
       </select>
     </div>
 
-    <div class="filter-section">
-      <div class="filter-title">პოპულარობა</div>
-      <div class="filter-options">
-        <button *ngFor="let option of popularityOptions"
-                [class.active]="filter.popularity === option.value"
-                (click)="filter.popularity = option.value; applyFilters()"
-                class="filter-button">
-          {{option.label}}
-        </button>
-      </div>
+    <div class="filter-group">
+      <label for="popular">პოპულარული</label>
+      <select id="popular" [(ngModel)]="filter.popular" class="filter-control" (change)="filterPopularCars()">
+        <option [value]="undefined">ყველა</option>
+        <option [value]="true">პოპულარული</option>
+      </select>
     </div>
 
     <div class="filter-buttons">

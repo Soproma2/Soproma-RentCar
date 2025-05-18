@@ -25,12 +25,12 @@ export class CarService {
     );
   }
 
-  // Get car by ID
+
   getCarById(id: number): Observable<Car> {
     return this.http.get<Car>(`${this.apiUrl}/Car/${id}`);
   }
 
-  // Filter cars with multiple criteria
+
   filterCars(filter: CarFilter): Observable<CarPaginatedData> {
     let params = new HttpParams();
 
@@ -58,24 +58,24 @@ export class CarService {
     });
   }
 
-  // Get popular cars
+
   getPopularCars(): Observable<Car[]> {
     return this.http.get<Car[]>(`${this.apiUrl}/Car/popular`);
   }
 
-  // Get cars by phone number
+
   getCarsByPhone(phoneNumber: string): Observable<Car[]> {
     return this.http.get<Car[]>(
       `${this.apiUrl}/Car/byPhone?phoneNumber=${phoneNumber}`
     );
   }
 
-  // Get available cities
+
   getCities(): Observable<string[]> {
     return this.http.get<string[]>(`${this.apiUrl}/Car/cities`);
   }
 
-  // Add a new car
+
   addCar(formData: FormData): Observable<any> {
     return this.http.post(`${this.apiUrl}/Car`, formData).pipe(
       catchError((error: HttpErrorResponse) => {
@@ -96,17 +96,17 @@ export class CarService {
     );
   }
 
-  // Update a car
+
   updateCar(id: number, updateCar: any): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/Car/${id}`, updateCar);
   }
 
-  // Delete a car
+
   deleteCar(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/Car/${id}`);
   }
 
-  // Get cars uploaded by a specific user
+
   getUserCars(userId: string): Observable<Car[]> {
     return this.http.get<Car[]>(`${this.apiUrl}/cars/user/${userId}`);
   }

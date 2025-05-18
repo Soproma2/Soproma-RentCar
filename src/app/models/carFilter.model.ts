@@ -5,6 +5,7 @@ export enum PopularityFilter {
 }
 
 export interface CarFilter {
+popular: any;
   capacity?: number;
   startYear?: number;
   endYear?: number;

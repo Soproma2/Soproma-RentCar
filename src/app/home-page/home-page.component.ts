@@ -23,10 +23,12 @@ export class HomePageComponent implements OnInit {
   pageSize: number = 12;
   totalPages: number = 1;
   totalItems: number = 0;
+  itemsPerPage = 12; // Add this property
 
   filter: CarFilter = {
     pageIndex: 1,
     pageSize: 12,
+    popular: undefined
   };
 
   cities: string[] = [];
@@ -148,6 +150,10 @@ export class HomePageComponent implements OnInit {
   }
 
   applyFilters(): void {
+    if (this.filter.popular) {
+      this.filterPopularCars();
+      return;
+    }
     this.filtersApplied = this.hasActiveFilters();
     this.filter.pageIndex = 1;
     this.filterCars();
@@ -155,17 +161,13 @@ export class HomePageComponent implements OnInit {
 
   clearFilters(): void {
     this.filter = {
-      pageIndex: 1,
-      pageSize: 10,
+      city: undefined,
+      capacity: undefined,
+      startYear: undefined,
+      endYear: undefined,
+      popular: undefined
     };
-    this.filtersApplied = false;
-    this.loadCarsPage(1);
-
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { page: 1 },
-      queryParamsHandling: '',
-    });
+    this.applyFilters();
   }
 
   hasActiveFilters(): boolean {
@@ -289,6 +291,24 @@ export class HomePageComponent implements OnInit {
           alert('ვერ მოხერხდა ფავორიტებში დამატება');
         }
       });
+    }
+  }
+
+  calculateTotalPages() {
+    this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
+  }
+
+  filterPopularCars() {
+    if (this.filter.popular) {
+      this.carService.getPopularCars().subscribe(
+        (cars) => {
+          this.filteredCars = cars;
+          this.totalItems = cars.length;
+          this.calculateTotalPages();
+        }
+      );
+    } else {
+      this.applyFilters();
     }
   }
 }
