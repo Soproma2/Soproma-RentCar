@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Car } from '../models/car.model';
+import { Ipurchase } from '../models/purchase.mode';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,7 @@ export class CarRentalService {
     return this.http.get<Car[]>(`${this.baseUrl}​/Purchase​/{phoneNumber}`);
   }
 
-  postPurchase(){
-    return this.http.post(`${this.baseUrl}​/Purchase​/purchase`, {});
-  }
+postPurchase(car: Ipurchase): Observable<Ipurchase> {
+    return this.http.post<Ipurchase>(`${this.baseUrl}/Purchase/purchase`, car);
+}
 }

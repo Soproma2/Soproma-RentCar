@@ -134,7 +134,7 @@ postCarRental() {
       multiplier: this.car.multiplier
     };
     
-    this.carRentalService.postPurchase().subscribe({
+    this.carRentalService.postPurchase(purchase).subscribe({
       next: (response: any) => {
         this.carRental.push(response as Ipurchase);
         console.log(response);
