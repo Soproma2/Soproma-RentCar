@@ -1,4 +1,4 @@
-<div class="search-container">
+<div class="search-container animate__animated animate__fadeInDown">
   <input
     type="text"
     [(ngModel)]="searchTerm"
@@ -12,7 +12,7 @@
 </div>
 
 
-<div class="filter-container">
+<div class="filter-container animate__animated animate__fadeInLeft">
   <h3 class="filter-title">ფილტრები</h3>
   <div class="filter-options">
     <div class="filter-group">
@@ -81,19 +81,17 @@
 </div>
 
 <div class="Cards">
-  <div class="card">
+  <div class="card animate__animated animate__fadeInLeft">
     <h1>საუკეთესო პლატფორმა</h1>
     <h2>მანქანის საქირავებლად</h2>
     <p>მანქანის ქირაობა ასეთი ადვილი არასდროს ყოფილა.</p>
-    <button class="btn">იქირავე</button>
     <img class="car-img" src="../../assets/images/car1.png" alt="car" />
   </div>
   <h1>Soproma</h1>
-  <div class="card2">
+  <div class="card2 animate__animated animate__fadeInRight">
     <h1>მანქანის ქირაობა</h1>
     <h2>ასეთი ადვილი არასდროს ყოფილა</h2>
     <p>იქირავე მანქანა სასურველ ფასში სასურველი დროით</p>
-    <button class="btn">იქირავე</button>
     <img class="car-img" src="../../assets/images/car2.webp" alt="car" />
   </div>
 </div>
@@ -102,8 +100,9 @@
 
   <div *ngIf="filteredCars.length > 0; else noCars" class="car-grid">
 
-    <div *ngFor="let car of filteredCars" class="car-card">
-      <div class="favorite-icon" (click)="toggleFavorite(car)">
+    <div *ngFor="let car of filteredCars" class="car-card animate__animated animate__fadeIn">
+      <div class="favorite-icon animate__animated" (click)="toggleFavorite(car)"
+           [class.animate__heartBeat]="isFavorite(car)">
         <span *ngIf="isFavorite(car)" class="remove-favorite" title="ფავორიტებიდან წაშლა">❤️</span>
         <span *ngIf="!isFavorite(car)" class="add-favorite" title="ფავორიტებში დამატება">🤍</span>
       </div>

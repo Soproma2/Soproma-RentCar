@@ -75,6 +75,26 @@ nav a:hover::before {
   opacity: 1;
 }
 
+.burger-menu {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 21px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1001;
+}
+
+.burger-menu span {
+  width: 100%;
+  height: 3px;
+  background-color: #2c5364;
+  transition: all 0.3s ease;
+}
+
 @media (max-width: 768px) {
   .header {
     padding: 15px 20px;
@@ -90,14 +110,95 @@ nav a:hover::before {
 }
 
 @media screen and (max-width: 560px){
-  header {
-    display: grid;
+  .header {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    padding: 10px 15px;
-    background: linear-gradient(90deg, lightgreen, green);
-    color: white;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    gap: 3px;
-    justify-content: center;
+    padding: 15px 20px;
+    background: white;
+  }
+
+  .burger-menu {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 25px;
+    height: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 1001;
+    position: relative;
+  }
+
+  .burger-menu span {
+    width: 100%;
+    height: 2px;
+    background-color: #2c5364;
+    transition: all 0.3s ease;
+    position: absolute;
+  }
+
+  .burger-menu span:first-child {
+    top: 0;
+  }
+
+  .burger-menu span:nth-child(2) {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .burger-menu span:last-child {
+    bottom: 0;
+  }
+
+  /* Burger animation when menu is open */
+  .burger-menu.active span:first-child {
+    transform: rotate(45deg);
+    top: 9px;
+  }
+
+  .burger-menu.active span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .burger-menu.active span:last-child {
+    transform: rotate(-45deg);
+    bottom: 9px;
+  }
+
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.98);
+    padding-top: 100px;
+    display: none;
+  }
+
+  nav.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    animation: fadeIn 0.3s ease;
+  }
+
+  nav a {
+    width: 80%;
+    text-align: center;
+    padding: 15px;
+    font-size: 18px;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 }

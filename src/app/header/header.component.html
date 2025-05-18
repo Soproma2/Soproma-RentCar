@@ -1,18 +1,22 @@
 <header class="header">
-  <div class="logo" routerLink="/">Soproma</div>
-  <nav>
-    <a routerLink="/">მთავარი</a>
+  <div class="logo" routerLink="/" (click)="closeMenu()">Soproma</div>
+  <button class="burger-menu" [class.active]="isMenuOpen" (click)="toggleMenu()">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  <nav [class.active]="isMenuOpen">
+    <a routerLink="/" (click)="closeMenu()">მთავარი</a>
 
     <ng-container *ngIf="!isLoggedIn">
-      <a routerLink="/login">შესვლა</a>
-      <a routerLink="/register">რეგისტრაცია</a>
+      <a routerLink="/login" (click)="closeMenu()">შესვლა</a>
+      <a routerLink="/register" (click)="closeMenu()">რეგისტრაცია</a>
     </ng-container>
 
-
     <ng-container *ngIf="isLoggedIn">
-      <a routerLink="/profile">პროფილი</a>
-      <a routerLink="/addCar">მანქანის დამატება</a>
-      <a href="javascript:void(0);" (click)="logout($event)">გასვლა</a>
+      <a routerLink="/profile" (click)="closeMenu()">პროფილი</a>
+      <a routerLink="/addCar" (click)="closeMenu()">მანქანის დამატება</a>
+      <a href="javascript:void(0);" (click)="logout($event); closeMenu()">გასვლა</a>
     </ng-container>
   </nav>
 </header>

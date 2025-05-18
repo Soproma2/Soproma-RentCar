@@ -15,6 +15,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isLoggedIn = false;
   private authCheckSubscription?: Subscription;
   private userSubscription?: Subscription;
+  isMenuOpen = false;
 
   constructor(
     private userService: UserService,
@@ -70,9 +71,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
     });
   }
 
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  closeMenu() {
+    this.isMenuOpen = false;
+  }
+
   logout(event: Event) {
     event.preventDefault();
-
+    this.isMenuOpen = false;  // Close menu when logging out
 
     this.userService.logout();
     localStorage.removeItem('isLoggedIn');
