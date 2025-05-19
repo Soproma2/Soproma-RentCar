@@ -230,4 +230,18 @@ export class ProfileComponent implements OnInit {
         });
     }
   }
+
+
+  calculateRentalDays(startDate: string | Date, endDate: string | Date): number {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const diffTime = Math.abs(end.getTime() - start.getTime());
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  }
+  
+  calculateTotalCost(rental: any): number {
+    const dailyPrice = rental.car.price * (rental.multiplier || rental.car.multiplier || 1);
+    const days = this.calculateRentalDays(rental.startDate, rental.endDate);
+    return dailyPrice * days;
+  }
 }

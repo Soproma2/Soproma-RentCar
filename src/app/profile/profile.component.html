@@ -50,22 +50,26 @@
             {{ rental.car.brand }} {{ rental.car.model }}
           </h4>
           <h4 *ngIf="!rental.car">ინფორმაციის ჩატვირთვა...</h4>
- 
+
           <div class="detail-row" *ngIf="rental.car">
             <span>წელი: {{ rental.car.year }}</span>
+            <span>ქალაქი: {{ rental.car.city }}</span>
           </div>
- 
-          <div class="car-price" *ngIf="rental.car">
-            {{
-              rental.car.price *
-                (rental.multiplier || rental.car.multiplier || 1)
-            }}₾ დღეში
+
+          <div class="detail-row" *ngIf="rental.car">
+            <span>დღიური ფასი: {{ rental.car.price * (rental.multiplier || rental.car.multiplier || 1) }}₾</span>
           </div>
- 
+
+          <!-- <div class="detail-row" *ngIf="rental.startDate && rental.endDate">
+            <span>ქირაობის პერიოდი: {{ calculateRentalDays(rental.startDate, rental.endDate) }} დღე</span>
+          </div>
+
+          <div class="detail-row" *ngIf="rental.startDate && rental.endDate">
+            <span>ჯამური ღირებულება: {{ calculateTotalCost(rental) }}₾</span>
+          </div> -->
+
           <div class="rental-actions">
-            <a [routerLink]="['/car', rental.carId]" class="view-details"
-              >დეტალები</a
-            >
+            <a [routerLink]="['/car', rental.carId]" class="view-details">დეტალები</a>
           </div>
         </div>
       </div>
